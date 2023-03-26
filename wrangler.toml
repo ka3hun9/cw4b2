@@ -1,0 +1,16 @@
+name = "access-privite-backblace-buckets"
+main = "src/index.ts"
+routes = [
+    { pattern = "*cdn.teto.top/*", zone_id = "28ea5b688a37bffd5b2c3d5697802dd1" },
+]
+account_id = "c36fde40712c6b4a3b4c3a69bebcec14"
+compatibility_date = "2023-03-24"
+[triggers]
+crons = ["* * * * 2"] # 设置每周二更新 Backblaze B2 Work
+
+[vars]
+# The necessary secrets are:
+# - BUCKET_ID
+# - BUCKET_AUTHORIZATION
+# - CLOUDFLARE_ACCOUNT_ID
+# - CLOUDFLARE_API_TOKEN
