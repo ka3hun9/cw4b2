@@ -1,9 +1,16 @@
 export interface Env {
   BUCKET_ID: string;
+  BUCKET_NAME: string;
   BUCKET_AUTHORIZATION: string;
   CLOUDFLARE_ACCOUNT_ID: string;
   CLOUDFLARE_API_TOKEN: string;
 }
+
+/**
+ * 自定义配置
+ */
+const validDurationInSeconds = 7 * 24 * 60 * 60; // 设置授权令牌最长失效时长 7 天
+const workerName = "work-cw4b2-01"; // 设置 Cloudflare Worker 的名称
 
 /**
  * Backblaze B2 接口
@@ -11,8 +18,6 @@ export interface Env {
 const b2_authorize_account =
     "https://api.backblazeb2.com/b2api/v2/b2_authorize_account",
   b2_get_download_authorization = "/b2api/v2/b2_get_download_authorization";
-
-const workerName = "work-backblacecloudflare-01";
 
 /**
  * 登录 Backblaze B2, 返回可用于帐户级操作的授权令牌
@@ -26,20 +31,19 @@ async function b2AuthorizeAccount({ BUCKET_AUTHORIZATION }: Env) {
 /**
  * 生成可用于从私有 B2 存储桶下载文件的授权令牌
  */
-async function b2GetDownloadAuthorization({
-  BUCKET_ID,
-  apiUrl,
-  authorizationToken,
-}: Env & { apiUrl: string; authorizationToken: string }) {
-  return await fetch(apiUrl + b2_get_download_authorization, {
+async function b2GetDownloadAuthorization(
+  arg: Env & { BUCKET_ID: string; apiUrl: string; authorizationToken: string }
+) {
+  console.log(arg);
+  return await fetch(arg.apiUrl + b2_get_download_authorization, {
     method: "POST",
     headers: {
-      Authorization: authorizationToken,
+      Authorization: arg.authorizationToken,
     },
     body: JSON.stringify({
-      bucketId: BUCKET_ID,
+      bucketId: arg.BUCKET_ID,
       fileNamePrefix: "",
-      validDurationInSeconds: 7 * 24 * 60 * 60, // 设置授权令牌最长失效时长 7 天
+      validDurationInSeconds,
     }),
   }).then((res) => res.json());
 }
@@ -50,25 +54,18 @@ async function b2GetDownloadAuthorization({
 async function uploadWorker<T extends Env & { authorizationToken: string }>(
   configs: T
 ) {
-  //   const workerCode = `export default {
-  // 	async fetch(request){
-  // 	  const headers = new Headers(request.headers)
-  // 	  headers.set("Authorization",${configs.authorizationToken})
-  // 	  return await fetch(request.url,{method:request.method,headers})
-  // 	}
-  //   }
-  //   `;
-
   const workerCode = `
-	addEventListener("fetch",event=>{
+	addEventListener("fetch",(event)=>{
 		event.respondWith(handleRequest(event.request))
 	})
 
-	async function handleRequest(request){
+	async function handleRequest(request) {
 		const headers = new Headers(request.headers)
-		headers.set("Authorization",${configs.authorizationToken})
-		const response = await fetch(request.url,{method:request.method,headers})
-		return response
+		headers.append("Authorization", "${configs.authorizationToken}")
+		const url = new URL(request.url)
+		return await fetch(\`\${url.protocol}//f005.backblazeb2.com/file/${configs.BUCKET_NAME}/\${url.pathname.match(/[0-9a-z]+.(jpg|jpeg|webp|png|gif|JPG|JPEG|WEBP|PNG|GIF)$/)[0]}\`, {
+			method: request.method, headers
+		})
 	}
   `;
 
@@ -99,9 +96,7 @@ export default {
         ...env,
         ...authAccount,
       });
-
-	  console.log(downloadAuthorization)
-
+      console.log(downloadAuthorization);
       uploadWorker({
         ...env,
         ...(downloadAuthorization as { authorizationToken: string }),
