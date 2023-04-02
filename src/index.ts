@@ -34,7 +34,6 @@ async function b2AuthorizeAccount({ BUCKET_AUTHORIZATION }: Env) {
 async function b2GetDownloadAuthorization(
   arg: Env & { BUCKET_ID: string; apiUrl: string; authorizationToken: string }
 ) {
-  console.log(arg);
   return await fetch(arg.apiUrl + b2_get_download_authorization, {
     method: "POST",
     headers: {
@@ -96,7 +95,7 @@ export default {
         ...env,
         ...authAccount,
       });
-      console.log(downloadAuthorization);
+
       uploadWorker({
         ...env,
         ...(downloadAuthorization as { authorizationToken: string }),
