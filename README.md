@@ -1,17 +1,19 @@
 # **使用 Cloudflare Worker 访问 Backblaze B2 私有桶**
 
-**cw4b2** 将会在 Cloudflare Workers 产生两个 Worker *( 一个用于**生产 Worker** , 另一个为**访问 Worker** )*. 因为 **Backblaze B2 授权令牌** 最大有效时长为 7 天, 所以我们需要在 wrangler.toml 中配置每隔 7 天 ( 默认是每周二 ) 运行**生产 Worker** 更新 **Backblaze B2 授权令牌** 并上传覆盖 **访问 Worker**
+**cw4b2** 采用 Cloudflare Wrangler 工具管理, Wrangler 安装使用教程, 请前往 https://developers.cloudflare.com/workers/
+
+**cw4b2** 将会在 Cloudflare Workers 产生两个 Worker *( 一个用于**生产 Worker** , 另一个为**访问 Worker** )*. 
+
+因为 **Backblaze B2 授权令牌** 最大有效时长为 7 天, 所以我们需要在 wrangler.toml 中配置每隔 7 天 ( 默认是每周二 ) 运行**生产 Worker** 更新 **Backblaze B2 授权令牌** 并上传覆盖 **访问 Worker**
 
 ```toml
 [triggers]
 crons = ["* * * * 2"] # 设置每周二更新 Backblaze B2 Worker
 ```
 
-**cw4b2** 采用 Cloudflare Wrangler 工具管理, Wrangler 安装使用教程, 请前往 https://developers.cloudflare.com/workers/
-
 ## **本地测试**
 
-使用 npm run start 在本地测试
+使用 npm start 在本地测试
 
 *( 请注意: 本地测试仍然会在 Cloudflare Workers 创建有效的 **访问 Worker** )*
 
