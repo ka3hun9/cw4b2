@@ -8,12 +8,18 @@
 
 ```toml
 [triggers]
-crons = ["* * * * 2"] # 设置每周二更新 Backblaze B2 Worker
+crons = ["17 4 * * 2"] # 设置每周一凌晨4点17分更新 Backblaze B2 Worker
 ```
 
 ## **本地测试**
 
 使用 npm start 在本地测试
+
+![image](https://user-images.githubusercontent.com/22870150/232201165-18d0941e-53dd-48ac-a62c-02e3a01fc1ca.png)
+
+打开另一个命令行工具, 输入 curl http://localhost:8787/cdn-cgi/mf/scheduledclear
+
+![image](https://user-images.githubusercontent.com/22870150/232201202-a96e3f13-4732-45e3-aec3-18f4773d85ad.png)
 
 *( 请注意: 本地测试仍然会在 Cloudflare Workers 创建有效的 **访问 Worker** )*
 
