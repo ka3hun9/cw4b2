@@ -2,7 +2,7 @@ name = "cw4b2"
 main = "src/index.ts"
 compatibility_date = "2023-03-24"
 [triggers]
-crons = ["* * * * 2"] # 设置每周二更新 Backblaze B2 Worker
+crons = ["17 4 * * 2"] # 设置每周一凌晨4点17分更新 Backblaze B2 Worker
 
 [vars]
 # The necessary secrets are:
