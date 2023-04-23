@@ -90,13 +90,12 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<void> {
-    b2AuthorizeAccount(env).then(async (authAccount: any) => {
+    await b2AuthorizeAccount(env).then(async (authAccount: any) => {
       const downloadAuthorization = await b2GetDownloadAuthorization({
         ...env,
         ...authAccount,
       });
-
-      uploadWorker({
+      await uploadWorker({
         ...env,
         ...(downloadAuthorization as { authorizationToken: string }),
       });
