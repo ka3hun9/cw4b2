@@ -17,7 +17,7 @@ crons = ["17 4 * * 2"] # 设置每周一凌晨4点17分更新 Backblaze B2 Worke
 
 ![image](https://user-images.githubusercontent.com/22870150/232201165-18d0941e-53dd-48ac-a62c-02e3a01fc1ca.png)
 
-打开另一个命令行工具, 输入 curl http://localhost:8787/cdn-cgi/mf/scheduledclear
+打开另一个命令行工具, 输入 curl http://localhost:8787/cdn-cgi/mf/scheduled
 
 ![image](https://user-images.githubusercontent.com/22870150/232201202-a96e3f13-4732-45e3-aec3-18f4773d85ad.png)
 

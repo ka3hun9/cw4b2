@@ -62,12 +62,11 @@ async function uploadWorker<T extends Env & { authorizationToken: string }>(
 		const headers = new Headers(request.headers)
 		headers.append("Authorization", "${configs.authorizationToken}")
 		const url = new URL(request.url)
-		return await fetch(\`\${url.protocol}//f005.backblazeb2.com/file/${configs.BUCKET_NAME}/\${url.pathname.match(/[0-9a-z]+.(jpg|jpeg|webp|png|gif|JPG|JPEG|WEBP|PNG|GIF)$/)[0]}\`, {
+		return await fetch(\`\${url.protocol}//f005.backblazeb2.com/file/${configs.BUCKET_NAME}/\${url.pathname.includes("poster")?"poster/":""}\${url.pathname.match(/[0-9a-z]+.(jpg|jpeg|webp|png|gif|JPG|JPEG|WEBP|PNG|GIF)$/)[0]}\`, {
 			method: request.method, headers
 		})
 	}
   `;
-
   await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${configs.CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${workerName}`,
     {
